@@ -209,4 +209,66 @@ describe("useTransactions", () => {
       expect(result.current.calculateProfitability("AAPL", 100)).toBe(0);
     });
   });
+
+  describe("getPortfolio", () => {
+    it("returns empty array when there are no transactions", () => {
+      const { result } = renderHook(() => useTransactions());
+      expect(result.current.getPortfolio()).toEqual([]);
+    });
+
+    it("returns one position per ticker", () => {
+      const { result } = renderHook(() => useTransactions());
+      act(() => {
+        result.current.create({ ...mockTransaction, ticker: "AAPL" });
+      });
+      act(() => {
+        result.current.create({ ...mockTransaction, ticker: "GOOGL", name: "Google LLC" });
+      });
+      const portfolio = result.current.getPortfolio();
+      expect(portfolio).toHaveLength(2);
+      expect(portfolio.map((p) => p.ticker).sort()).toEqual(["AAPL", "GOOGL"]);
+    });
+
+    it("aggregates quantity for the same ticker", () => {
+      const { result } = renderHook(() => useTransactions());
+      act(() => {
+        result.current.create({ ...mockTransaction, quantity: 10, pricePaid: 100 });
+      });
+      act(() => {
+        result.current.create({ ...mockTransaction, quantity: 5, pricePaid: 200 });
+      });
+      const portfolio = result.current.getPortfolio();
+      const aapl = portfolio.find((p) => p.ticker === "AAPL")!;
+      expect(aapl.quantity).toBe(15);
+    });
+
+    it("calculates weighted average price for the same ticker", () => {
+      const { result } = renderHook(() => useTransactions());
+      act(() => {
+        result.current.create({ ...mockTransaction, quantity: 10, pricePaid: 100 });
+      });
+      act(() => {
+        result.current.create({ ...mockTransaction, quantity: 10, pricePaid: 200 });
+      });
+      const portfolio = result.current.getPortfolio();
+      const aapl = portfolio.find((p) => p.ticker === "AAPL")!;
+      // (10*100 + 10*200) / 20 = 150
+      expect(aapl.averagePrice).toBe(150);
+    });
+
+    it("sets lastTimeBought to the most recent transaction date", () => {
+      const { result } = renderHook(() => useTransactions());
+      const earlier = new Date("2024-01-01");
+      const later = new Date("2024-06-01");
+      act(() => {
+        result.current.create({ ...mockTransaction, date: earlier });
+      });
+      act(() => {
+        result.current.create({ ...mockTransaction, date: later });
+      });
+      const portfolio = result.current.getPortfolio();
+      const aapl = portfolio.find((p) => p.ticker === "AAPL")!;
+      expect(aapl.lastTimeBought).toEqual(later);
+    });
+  });
 });

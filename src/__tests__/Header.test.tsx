@@ -23,4 +23,11 @@ describe("Header", () => {
     expect(transactionsLink).toBeInTheDocument();
     expect(transactionsLink).toHaveAttribute("href", "/transactions");
   });
+
+  it("renders a link to the wallet page", () => {
+    render(<Header />);
+    const walletLink = screen.getByRole("link", { name: "Wallet" });
+    expect(walletLink).toBeInTheDocument();
+    expect(walletLink).toHaveAttribute("href", "/wallet");
+  });
 });
