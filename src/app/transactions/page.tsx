@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
+import { AddTransactionModal } from "@/components/AddTransactionModal";
 
 export default function TransactionsPage() {
-  const { transactions, load } = useTransactions();
+  const { transactions, load, create } = useTransactions();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     load();
@@ -12,7 +14,21 @@ export default function TransactionsPage() {
 
   return (
     <main className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Transactions</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Transactions</h1>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Add Transaction
+        </button>
+      </div>
+      {isModalOpen && (
+        <AddTransactionModal
+          onClose={() => setIsModalOpen(false)}
+          onCreate={create}
+        />
+      )}
       {transactions.length === 0 ? (
         <p className="text-gray-500">No transactions found.</p>
       ) : (
