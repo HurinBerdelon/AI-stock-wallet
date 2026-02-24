@@ -2,8 +2,7 @@
 
 import { useTransactions } from "@/hooks/useTransactions";
 import { StockTransaction } from "@/types/StockTransaction";
-
-const STORAGE_KEY = "stock_transactions";
+import { STORAGE_KEY } from "@/constants";
 
 const SAMPLE_TRANSACTIONS: Omit<StockTransaction, "id">[] = [
   { name: "Apple Inc.", ticker: "AAPL", quantity: 10, pricePaid: 185.5, date: new Date("2025-01-15") },

@@ -1,7 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { useTransactions } from "@/hooks/useTransactions";
-
-const STORAGE_KEY = "stock_transactions";
+import { STORAGE_KEY } from "@/constants";
 
 const mockDate = new Date("2024-01-15");
 
