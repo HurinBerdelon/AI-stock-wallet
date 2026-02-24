@@ -87,29 +87,44 @@ export function useTransactions() {
   );
 
   const getPortfolio = useCallback((): StockPosition[] => {
-    const map = new Map<string, StockPosition>();
+    const map = new Map<string, {
+      name: string;
+      netQuantity: number;
+      totalBuyCost: number;
+      totalBuyQuantity: number;
+      lastTimeBought: Date;
+    }>();
     for (const t of transactions) {
-      const existing = map.get(t.ticker);
-      if (existing) {
-        const totalCost = existing.averagePrice * existing.quantity + t.pricePaid * t.quantity;
-        const totalQuantity = existing.quantity + t.quantity;
-        existing.averagePrice = totalQuantity === 0 ? 0 : totalCost / totalQuantity;
-        existing.quantity = totalQuantity;
-        if (t.date > existing.lastTimeBought) {
-          existing.lastTimeBought = t.date;
-          existing.name = t.name;
+      const entry = map.get(t.ticker);
+      if (entry) {
+        entry.netQuantity += t.quantity;
+        if (t.quantity > 0) {
+          entry.totalBuyCost += t.pricePaid * t.quantity;
+          entry.totalBuyQuantity += t.quantity;
+        }
+        if (t.date > entry.lastTimeBought) {
+          entry.lastTimeBought = t.date;
+          entry.name = t.name;
         }
       } else {
         map.set(t.ticker, {
-          ticker: t.ticker,
           name: t.name,
-          quantity: t.quantity,
-          averagePrice: t.pricePaid,
+          netQuantity: t.quantity,
+          totalBuyCost: t.quantity > 0 ? t.pricePaid * t.quantity : 0,
+          totalBuyQuantity: t.quantity > 0 ? t.quantity : 0,
           lastTimeBought: t.date,
         });
       }
     }
-    return Array.from(map.values());
+    return Array.from(map.entries())
+      .filter(([, e]) => e.netQuantity > 0)
+      .map(([ticker, e]) => ({
+        ticker,
+        name: e.name,
+        quantity: e.netQuantity,
+        averagePrice: e.totalBuyQuantity === 0 ? 0 : e.totalBuyCost / e.totalBuyQuantity,
+        lastTimeBought: e.lastTimeBought,
+      }));
   }, [transactions]);
 
   return {
