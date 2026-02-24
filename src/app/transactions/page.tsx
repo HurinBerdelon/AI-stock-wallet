@@ -51,28 +51,15 @@ export default function TransactionsPage() {
       {transactions.length === 0 ? (
         <p className="text-gray-500">No transactions found.</p>
       ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="text-left p-3 border">Name</th>
-              <th className="text-left p-3 border">Ticker</th>
-              <th className="text-right p-3 border">Quantity</th>
-              <th className="text-right p-3 border">Price Paid</th>
-              <th className="text-right p-3 border">Total</th>
-              <th className="text-left p-3 border">Date</th>
-              <th className="p-3 border"><span className="sr-only">Actions</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction.id} className="hover:bg-gray-50">
-                <td className="p-3 border">{transaction.name}</td>
-                <td className="p-3 border font-mono">{transaction.ticker}</td>
-                <td className="p-3 border text-right">{transaction.quantity}</td>
-                <td className="p-3 border text-right">${transaction.pricePaid.toFixed(2)}</td>
-                <td className="p-3 border text-right">${(transaction.quantity * transaction.pricePaid).toFixed(2)}</td>
-                <td className="p-3 border">{transaction.date.toLocaleDateString()}</td>
-                <td className="p-3 border text-center">
+        <div className="grid gap-4">
+          {transactions.map((transaction) => (
+            <div key={transaction.id} className="border rounded-lg p-4 bg-white shadow-sm">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <p className="font-semibold">{transaction.name}</p>
+                  <p className="font-mono text-sm text-gray-600">{transaction.ticker}</p>
+                </div>
+                <div className="flex gap-1">
                   <button
                     onClick={() => setEditingTransaction(transaction)}
                     aria-label={`Edit ${transaction.name}`}
@@ -85,17 +72,35 @@ export default function TransactionsPage() {
                   <button
                     onClick={() => setDeletingTransaction(transaction)}
                     aria-label={`Delete ${transaction.name}`}
-                    className="p-1 text-gray-500 hover:text-red-600 rounded hover:bg-gray-100 ml-1"
+                    className="p-1 text-gray-500 hover:text-red-600 rounded hover:bg-gray-100"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                       <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                <div>
+                  <p className="text-gray-500">Quantity</p>
+                  <p>{transaction.quantity}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Price Paid</p>
+                  <p>${transaction.pricePaid.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Total</p>
+                  <p>${(transaction.quantity * transaction.pricePaid).toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Date</p>
+                  <p>{transaction.date.toLocaleDateString()}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </main>
   );

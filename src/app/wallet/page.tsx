@@ -39,27 +39,37 @@ export default function WalletPage() {
       {portfolio.length === 0 ? (
         <p className="text-gray-500">No stocks in wallet.</p>
       ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="text-left p-3 border">Ticker</th>
-              <th className="text-right p-3 border">Quantity</th>
-              <th className="text-right p-3 border">Avg. Price</th>
-              <th className="text-left p-3 border">Last Bought</th>
-              <th className="text-right p-3 border">Current Price</th>
-              <th className="text-right p-3 border">Profitability</th>
-            </tr>
-          </thead>
-          <tbody>
-            {portfolio.map((pos) => {
-              const profitability = getProfitability(pos.ticker);
-              return (
-                <tr key={pos.ticker} className="hover:bg-gray-50">
-                  <td className="p-3 border font-mono">{pos.ticker}</td>
-                  <td className="p-3 border text-right">{pos.quantity}</td>
-                  <td className="p-3 border text-right">${pos.averagePrice.toFixed(2)}</td>
-                  <td className="p-3 border">{pos.lastTimeBought.toLocaleDateString()}</td>
-                  <td className="p-3 border text-right">
+        <div className="grid gap-4">
+          {portfolio.map((pos) => {
+            const profitability = getProfitability(pos.ticker);
+            return (
+              <div key={pos.ticker} className="border rounded-lg p-4 bg-white shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="font-mono font-bold text-lg">{pos.ticker}</span>
+                  {profitability === null ? (
+                    <span className="text-gray-400">—</span>
+                  ) : (
+                    <span className={profitability >= 0 ? "text-green-600" : "text-red-600"}>
+                      {profitability >= 0 ? "+" : ""}
+                      {profitability.toFixed(2)}%
+                    </span>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                  <div>
+                    <p className="text-gray-500">Quantity</p>
+                    <p>{pos.quantity}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Avg. Price</p>
+                    <p>${pos.averagePrice.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Last Bought</p>
+                    <p>{pos.lastTimeBought.toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Current Price</p>
                     <input
                       type="number"
                       step="any"
@@ -68,22 +78,12 @@ export default function WalletPage() {
                       value={currentPrices[pos.ticker] ?? ""}
                       onChange={(e) => handlePriceChange(pos.ticker, e.target.value)}
                     />
-                  </td>
-                  <td className="p-3 border text-right">
-                    {profitability === null ? (
-                      <span className="text-gray-400">—</span>
-                    ) : (
-                      <span className={profitability >= 0 ? "text-green-600" : "text-red-600"}>
-                        {profitability >= 0 ? "+" : ""}
-                        {profitability.toFixed(2)}%
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </main>
   );
