@@ -10,6 +10,9 @@ export default function Header() {
         <Link href="/transactions" className="font-semibold hover:underline">
           Transactions
         </Link>
+        <Link href="/wallet" className="font-semibold hover:underline">
+          Wallet
+        </Link>
       </nav>
     </header>
   );
