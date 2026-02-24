@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import TransactionsPage from "../app/transactions/page";
 import { StockTransaction } from "../types/StockTransaction";
 import * as useTransactionsModule from "../hooks/useTransactions";
@@ -38,6 +38,26 @@ describe("TransactionsPage", () => {
       calculateAveragePrice: jest.fn(),
       calculateProfitability: jest.fn(),
     });
+  });
+
+  it("renders the Add Transaction button", () => {
+    render(<TransactionsPage />);
+    expect(screen.getByRole("button", { name: "Add Transaction" })).toBeInTheDocument();
+  });
+
+  it("opens the modal when Add Transaction button is clicked", () => {
+    render(<TransactionsPage />);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Add Transaction" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("closes the modal when Cancel is clicked", () => {
+    render(<TransactionsPage />);
+    fireEvent.click(screen.getByRole("button", { name: "Add Transaction" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("renders the page heading", () => {
