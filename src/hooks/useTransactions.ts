@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { StockTransaction } from "@/types/StockTransaction";
+import { StockPosition } from "@/types/StockPosition";
 
 const STORAGE_KEY = "stock_transactions";
 
@@ -85,6 +86,32 @@ export function useTransactions() {
     [calculateAveragePrice]
   );
 
+  const getPortfolio = useCallback((): StockPosition[] => {
+    const map = new Map<string, StockPosition>();
+    for (const t of transactions) {
+      const existing = map.get(t.ticker);
+      if (existing) {
+        const totalCost = existing.averagePrice * existing.quantity + t.pricePaid * t.quantity;
+        const totalQuantity = existing.quantity + t.quantity;
+        existing.averagePrice = totalQuantity === 0 ? 0 : totalCost / totalQuantity;
+        existing.quantity = totalQuantity;
+        if (t.date > existing.lastTimeBought) {
+          existing.lastTimeBought = t.date;
+          existing.name = t.name;
+        }
+      } else {
+        map.set(t.ticker, {
+          ticker: t.ticker,
+          name: t.name,
+          quantity: t.quantity,
+          averagePrice: t.pricePaid,
+          lastTimeBought: t.date,
+        });
+      }
+    }
+    return Array.from(map.values());
+  }, [transactions]);
+
   return {
     transactions,
     load,
@@ -93,5 +120,6 @@ export function useTransactions() {
     remove,
     calculateAveragePrice,
     calculateProfitability,
+    getPortfolio,
   };
 }
