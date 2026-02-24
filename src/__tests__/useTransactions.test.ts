@@ -3,12 +3,14 @@ import { useTransactions } from "@/hooks/useTransactions";
 
 const STORAGE_KEY = "stock_transactions";
 
+const mockDate = new Date("2024-01-15");
+
 const mockTransaction = {
   name: "Apple Inc.",
   ticker: "AAPL",
   quantity: 10,
   pricePaid: 150,
-  date: "2024-01-15",
+  date: mockDate,
 };
 
 beforeEach(() => {
@@ -35,7 +37,10 @@ describe("useTransactions", () => {
       act(() => {
         result.current.load();
       });
-      expect(result.current.transactions).toEqual(stored);
+      expect(result.current.transactions).toHaveLength(1);
+      expect(result.current.transactions[0].id).toBe("1");
+      expect(result.current.transactions[0].ticker).toBe("AAPL");
+      expect(result.current.transactions[0].date).toEqual(mockDate);
     });
   });
 

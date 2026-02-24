@@ -8,7 +8,12 @@ export function useTransactions() {
 
   const load = useCallback((): StockTransaction[] => {
     const raw = localStorage.getItem(STORAGE_KEY);
-    const loaded: StockTransaction[] = raw ? JSON.parse(raw) : [];
+    const loaded: StockTransaction[] = raw
+      ? JSON.parse(raw).map((t: Omit<StockTransaction, "date"> & { date: string }) => {
+          const date = new Date(t.date);
+          return { ...t, date: isNaN(date.getTime()) ? new Date() : date };
+        })
+      : [];
     setTransactions(loaded);
     return loaded;
   }, []);
