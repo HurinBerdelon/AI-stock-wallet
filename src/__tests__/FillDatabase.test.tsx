@@ -10,7 +10,7 @@ beforeEach(() => {
 describe("FillDatabase", () => {
   it("renders a button", () => {
     render(<FillDatabase />);
-    expect(screen.getByRole("button")).toBeTruthy();
+    expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
   it("saves 10 transactions to localStorage when button is clicked", () => {
