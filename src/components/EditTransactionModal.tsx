@@ -165,7 +165,7 @@ export function EditTransactionModal({ transaction, onClose, onUpdate }: Props) 
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
             >
               Save
             </button>
