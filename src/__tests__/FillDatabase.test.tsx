@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { FillDatabase } from "@/components/FillDatabase";
-
-const STORAGE_KEY = "stock_transactions";
+import { STORAGE_KEY } from "@/constants";
 
 beforeEach(() => {
   localStorage.clear();

@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { StockTransaction } from "@/types/StockTransaction";
-
-const STORAGE_KEY = "stock_transactions";
+import { STORAGE_KEY } from "@/constants";
 
 export function useTransactions() {
   const [transactions, setTransactions] = useState<StockTransaction[]>([]);
